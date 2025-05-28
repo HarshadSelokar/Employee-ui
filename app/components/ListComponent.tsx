@@ -1,94 +1,307 @@
 import { useState } from "react";
-import type { ListItem } from "~/data/data";
+import { MagnifyingGlassIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 
 interface ListComponentProps {
-  title: string;
-  items: ListItem[];
+    title: string;
 }
 
-export default function ListComponent({ title, items }: ListComponentProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [listItems, setListItems] = useState(items);
-  const [newItem, setNewItem] = useState("");
+interface Country {
+    country: string;
+    code: string;
+    order: string;
+    phLength: string;
+    pinLength: string;
+    isDefault: boolean;
+}
 
-  // Filtered items
-  const filteredItems = listItems.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+interface StateItem {
+    state: string;
+    order: string;
+    isDefault: boolean;
+}
 
-  const handleAdd = () => {
-    if (newItem.trim()) {
-      setListItems([...listItems, { name: newItem }]);
-      setNewItem("");
-    }
-  };
+interface CityItem {
+    city: string;
+    order: string;
+    pincode: string;
+    isDefault: boolean;
+}
 
-  const handleReset = () => {
-    setSearchTerm("");
-    setNewItem("");
-  };
+interface RegionItem {
+    region: string;
+    order: string;
+    pincode: string;
+    isDefault: boolean;
+}
 
-  return (
-    <div className="flex flex-col border border-gray-300 rounded p-2 m-1 w-full">
-      <div className="flex justify-between mb-1">
-        <div className="font-semibold">{title.toUpperCase()}</div>
-      </div>
+export default function ListComponent({ title }: ListComponentProps) {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isDefault, setIsDefault] = useState(false);
 
-      <div className="flex flex-col gap-1 mb-1">
-        <input
-          type="text"
-          placeholder={title}
-          className="border border-gray-300 rounded p-1 text-sm"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-        />
-        <div className="flex gap-1">
-          <input
-            type="text"
-            placeholder="Order"
-            className="border border-gray-300 rounded p-1 text-sm w-full"
-          />
-          <input
-            type="text"
-            placeholder="Pincode"
-            className="border border-gray-300 rounded p-1 text-sm w-full"
-          />
+    // Input fields
+    const [inputs, setInputs] = useState<any>({
+        country: "",
+        code: "",
+        order: "",
+        phLength: "",
+        pinLength: "",
+        state: "",
+        city: "",
+        region: "",
+        pincode: "",
+    });
+
+    // List of items
+    const [items, setItems] = useState<any[]>([]);
+
+    const handleInputChange = (field: string, value: string) => {
+        setInputs({ ...inputs, [field]: value });
+    };
+
+    const handleAdd = () => {
+        let newItem;
+        switch (title) {
+            case "Country":
+                newItem = {
+                    country: inputs.country,
+                    code: inputs.code,
+                    order: inputs.order,
+                    phLength: inputs.phLength,
+                    pinLength: inputs.pinLength,
+                    isDefault,
+                } as Country;
+                break;
+            case "State":
+                newItem = {
+                    state: inputs.state,
+                    order: inputs.order,
+                    isDefault,
+                } as StateItem;
+                break;
+            case "City":
+                newItem = {
+                    city: inputs.city,
+                    order: inputs.order,
+                    pincode: inputs.pincode,
+                    isDefault,
+                } as CityItem;
+                break;
+            case "Region":
+                newItem = {
+                    region: inputs.region,
+                    order: inputs.order,
+                    pincode: inputs.pincode,
+                    isDefault,
+                } as RegionItem;
+                break;
+            default:
+                return;
+        }
+        setItems([...items, newItem]);
+        handleReset();
+    };
+
+    const handleReset = () => {
+        setInputs({
+            country: "",
+            code: "",
+            order: "",
+            phLength: "",
+            pinLength: "",
+            state: "",
+            city: "",
+            region: "",
+            pincode: "",
+        });
+        setIsDefault(false);
+    };
+
+    const filteredItems = items.filter((item) => {
+        if (!searchTerm) return true;
+        return JSON.stringify(item).toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+    const renderFields = () => {
+        switch (title) {
+            case "Country":
+                return (
+                    <>
+                        <div className="flex gap-1 mb-1">
+                            <div className="flex-1">
+                                <label className="text-xs">Country</label>
+                                <input
+                                    value={inputs.country}
+                                    onChange={(e) => handleInputChange("country", e.target.value)}
+                                    className="border border-gray-300 rounded w-full p-1 text-xs"
+                                />
+                            </div>
+                            <div className="w-16">
+                                <label className="text-xs">Code</label>
+                                <input
+                                    value={inputs.code}
+                                    onChange={(e) => handleInputChange("code", e.target.value)}
+                                    className="border border-gray-300 rounded w-full p-1 text-xs"
+                                />
+                            </div>
+                            <div className="w-16">
+                                <label className="text-xs">Order</label>
+                                <input
+                                    value={inputs.order}
+                                    onChange={(e) => handleInputChange("order", e.target.value)}
+                                    className="border border-gray-300 rounded w-full p-1 text-xs"
+                                />
+                            </div>
+                            <div className="w-16">
+                                <label className="text-xs">Ph# Length</label>
+                                <input
+                                    value={inputs.phLength}
+                                    onChange={(e) => handleInputChange("phLength", e.target.value)}
+                                    className="border border-gray-300 rounded w-full p-1 text-xs"
+                                />
+                            </div>
+                            <div className="w-16">
+                                <label className="text-xs">Pin Length</label>
+                                <input
+                                    value={inputs.pinLength}
+                                    onChange={(e) => handleInputChange("pinLength", e.target.value)}
+                                    className="border border-gray-300 rounded w-full p-1 text-xs"
+                                />
+                            </div>
+                        </div>
+                    </>
+                );
+            case "State":
+                return (
+                    <div className="flex gap-1 mb-1">
+                        <div className="flex-1">
+                            <label className="text-xs">State</label>
+                            <input
+                                value={inputs.state}
+                                onChange={(e) => handleInputChange("state", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                        <div className="w-16">
+                            <label className="text-xs">Order</label>
+                            <input
+                                value={inputs.order}
+                                onChange={(e) => handleInputChange("order", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                    </div>
+                );
+            case "City":
+                return (
+                    <div className="flex gap-1 mb-1">
+                        <div className="flex-1">
+                            <label className="text-xs">City</label>
+                            <input
+                                value={inputs.city}
+                                onChange={(e) => handleInputChange("city", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                        <div className="w-16">
+                            <label className="text-xs">Order</label>
+                            <input
+                                value={inputs.order}
+                                onChange={(e) => handleInputChange("order", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                        <div className="w-24">
+                            <label className="text-xs">Pincode</label>
+                            <input
+                                value={inputs.pincode}
+                                onChange={(e) => handleInputChange("pincode", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                    </div>
+                );
+            case "Region":
+                return (
+                    <div className="flex gap-1 mb-1">
+                        <div className="flex-1">
+                            <label className="text-xs">Region</label>
+                            <input
+                                value={inputs.region}
+                                onChange={(e) => handleInputChange("region", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                        <div className="w-16">
+                            <label className="text-xs">Order</label>
+                            <input
+                                value={inputs.order}
+                                onChange={(e) => handleInputChange("order", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                        <div className="w-24">
+                            <label className="text-xs">Pincode</label>
+                            <input
+                                value={inputs.pincode}
+                                onChange={(e) => handleInputChange("pincode", e.target.value)}
+                                className="border border-gray-300 rounded w-full p-1 text-xs"
+                            />
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="flex flex-col border border-gray-300 rounded w-full h-[90%]">
+            {/* Title bar */}
+            <div className="flex justify-between items-center bg-[#4e6a7c] text-white text-xs font-bold p-1">
+                <div>{title.toUpperCase()}</div>
+                <Cog6ToothIcon className="w-4 h-4" />
+            </div>
+
+            {/* Input fields */}
+            <div className="p-1 flex flex-col gap-1 overflow-y-auto">
+                {renderFields()}
+                <div className="flex justify-between px-0.5">
+                    {/* Is Default */}
+                    <div className="flex items-center gap-1 text-xs">
+                        <input type="checkbox" checked={isDefault} onChange={() => setIsDefault(!isDefault)} />
+                        <label>Is Default</label>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-1 mb-1">
+                        <button onClick={handleAdd} className="bg-[#428bca] text-white text-xs px-2 py-1 rounded">Add</button>
+                        <button onClick={handleReset} className="bg-[#d3d3d3] text-xs px-2 py-1 rounded">Reset</button>
+                    </div>
+                </div>
+
+
+                {/* Search input with icon */}
+                <div className="relative mb-1">
+                    <input
+                        type="text"
+                        placeholder={`Search ${title}`}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="border border-gray-300 rounded w-full p-1 text-xs pr-6"
+                    />
+                    <MagnifyingGlassIcon className="w-4 h-4 absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+
+                {/* List of items */}
+                <div className="flex flex-col gap-1 text-xs overflow-y-auto max-h-40 border border-gray-300 rounded p-1">
+                    {filteredItems.map((item, idx) => (
+                        <div key={idx} className="border-b border-gray-200 py-0.5">
+                            {JSON.stringify(item)}
+                        </div>
+                    ))}
+                    {filteredItems.length === 0 && <div className="text-gray-400">No items found</div>}
+                </div>
+            </div>
         </div>
-        <div className="flex items-center gap-1">
-          <input type="checkbox" />
-          <label className="text-xs">Is Default</label>
-        </div>
-        <div className="flex gap-1">
-          <button
-            onClick={handleAdd}
-            className="bg-blue-500 text-white text-xs px-2 py-1 rounded"
-          >
-            Add
-          </button>
-          <button
-            onClick={handleReset}
-            className="bg-gray-300 text-xs px-2 py-1 rounded"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-
-      <input
-        type="text"
-        placeholder={`Search ${title}`}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="border border-gray-300 rounded p-1 text-sm mb-1"
-      />
-
-      <div className="border border-gray-300 h-48 overflow-y-auto text-sm">
-        {filteredItems.map((item, idx) => (
-          <div key={idx} className="p-1 border-b border-gray-200">
-            {item.name}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    );
 }
