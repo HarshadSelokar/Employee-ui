@@ -4,9 +4,14 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  background-color: white;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
+/* 
+text{
+
+  color: black;
+} */
