@@ -173,7 +173,7 @@ export default function ListComponent({ title }: ListComponentProps) {
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
-            <div className="w-16">
+            <div className="w-[2rem]">
               <label className="text-xs">Code</label>
               <input
                 value={inputs.code}
@@ -182,7 +182,7 @@ export default function ListComponent({ title }: ListComponentProps) {
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
-            <div className="w-16">
+            <div className="w-[2rem]">
               <label className="text-xs">Order</label>
               <input
                 value={inputs.order}
