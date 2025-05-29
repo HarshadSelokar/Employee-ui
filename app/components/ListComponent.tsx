@@ -1,38 +1,28 @@
 import { useState } from "react";
 import { MagnifyingGlassIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { countries } from "~/data/data";
+
+const initialCountries = [
+  { country: "India", code: "IN", order: "1", phLength: "10", pinLength: "6", isDefault: false },
+  { country: "United States", code: "US", order: "2", phLength: "10", pinLength: "5", isDefault: false },
+];
+
+const initialStates = [
+  { state: "Maharashtra", order: "1", isDefault: false },
+  { state: "California", order: "2", isDefault: false },
+];
+
+const initialCities = [
+  { city: "Nagpur", order: "1", pincode: "440001", isDefault: false },
+  { city: "San Francisco", order: "2", pincode: "94103", isDefault: false },
+];
+
+const initialRegions = [
+  { region: "Vidarbha", order: "1", pincode: "440001", isDefault: false },
+  { region: "Bay Area", order: "2", pincode: "94103", isDefault: false },
+];
 
 interface ListComponentProps {
   title: string;
-}
-
-interface Country {
-  country: string;
-  code: string;
-  order: string;
-  phLength: string;
-  pinLength: string;
-  isDefault: boolean;
-}
-
-interface StateItem {
-  state: string;
-  order: string;
-  isDefault: boolean;
-}
-
-interface CityItem {
-  city: string;
-  order: string;
-  pincode: string;
-  isDefault: boolean;
-}
-
-interface RegionItem {
-  region: string;
-  order: string;
-  pincode: string;
-  isDefault: boolean;
 }
 
 export default function ListComponent({ title }: ListComponentProps) {
@@ -51,17 +41,51 @@ export default function ListComponent({ title }: ListComponentProps) {
     pincode: "",
   });
 
-  const [items, setItems] = useState<any[]>([]);
-
-  const filteredCountries = countries.filter((country) =>
-    country.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [items, setItems] = useState<any[]>(() => {
+    switch (title) {
+      case "Country":
+        return initialCountries;
+      case "State":
+        return initialStates;
+      case "City":
+        return initialCities;
+      case "Region":
+        return initialRegions;
+      default:
+        return [];
+    }
+  });
 
   const handleInputChange = (field: string, value: string) => {
     setInputs({ ...inputs, [field]: value });
   };
 
   const handleAdd = () => {
+
+    let requiredField = "";
+    switch (title) {
+      case "Country":
+        requiredField = "country";
+        break;
+      case "State":
+        requiredField = "state";
+        break;
+      case "City":
+        requiredField = "city";
+        break;
+      case "Region":
+        requiredField = "region";
+        break;
+      default:
+        break;
+    }
+
+    // Check if the required field is empty
+    if (!inputs[requiredField]) {
+      alert(`${requiredField} is required!`);
+      return;
+    }
+
     let newItem;
     switch (title) {
       case "Country":
@@ -72,14 +96,14 @@ export default function ListComponent({ title }: ListComponentProps) {
           phLength: inputs.phLength,
           pinLength: inputs.pinLength,
           isDefault,
-        } as Country;
+        };
         break;
       case "State":
         newItem = {
           state: inputs.state,
           order: inputs.order,
           isDefault,
-        } as StateItem;
+        };
         break;
       case "City":
         newItem = {
@@ -87,7 +111,7 @@ export default function ListComponent({ title }: ListComponentProps) {
           order: inputs.order,
           pincode: inputs.pincode,
           isDefault,
-        } as CityItem;
+        };
         break;
       case "Region":
         newItem = {
@@ -95,7 +119,7 @@ export default function ListComponent({ title }: ListComponentProps) {
           order: inputs.order,
           pincode: inputs.pincode,
           isDefault,
-        } as RegionItem;
+        };
         break;
       default:
         return;
@@ -105,9 +129,7 @@ export default function ListComponent({ title }: ListComponentProps) {
   };
 
   const handleReset = () => {
-console.log("Reset clicked!");
     setInputs({
-        
       country: "",
       code: "",
       order: "",
@@ -121,12 +143,15 @@ console.log("Reset clicked!");
     setIsDefault(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAdd();
+    }
+  };
+
   const filteredItems = items.filter((item) => {
-    if (!searchTerm){
-
-        return true;
-    } 
-
+    if (!searchTerm) return true;
     return Object.values(item)
       .join(" ")
       .toLowerCase()
@@ -136,13 +161,15 @@ console.log("Reset clicked!");
   const renderFields = () => {
     switch (title) {
       case "Country":
-        return (
+        return ( 
+            
           <div className="flex gap-1 mb-1">
             <div className="flex-1">
               <label className="text-xs">Country</label>
               <input
                 value={inputs.country}
                 onChange={(e) => handleInputChange("country", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -151,6 +178,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.code}
                 onChange={(e) => handleInputChange("code", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -159,6 +187,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.order}
                 onChange={(e) => handleInputChange("order", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -167,6 +196,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.phLength}
                 onChange={(e) => handleInputChange("phLength", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -175,6 +205,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.pinLength}
                 onChange={(e) => handleInputChange("pinLength", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -188,6 +219,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.state}
                 onChange={(e) => handleInputChange("state", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -196,6 +228,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.order}
                 onChange={(e) => handleInputChange("order", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -209,6 +242,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.city}
                 onChange={(e) => handleInputChange("city", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -217,6 +251,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.order}
                 onChange={(e) => handleInputChange("order", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -225,6 +260,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.pincode}
                 onChange={(e) => handleInputChange("pincode", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -238,6 +274,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.region}
                 onChange={(e) => handleInputChange("region", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -246,6 +283,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.order}
                 onChange={(e) => handleInputChange("order", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -254,6 +292,7 @@ console.log("Reset clicked!");
               <input
                 value={inputs.pincode}
                 onChange={(e) => handleInputChange("pincode", e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -281,10 +320,7 @@ console.log("Reset clicked!");
 
   return (
     <div className="flex flex-col border border-gray-300 rounded w-full h-[90%]">
-
       <div className="flex justify-between items-center bg-[#4e6a7c] text-white text-xs font-bold p-1">
-
-        
         <div>{title.toUpperCase()}</div>
         <Cog6ToothIcon className="w-4 h-4" />
       </div>
@@ -329,27 +365,12 @@ console.log("Reset clicked!");
         </div>
 
         <div className="flex flex-col gap-1 text-xs overflow-y-auto max-h-[40rem] border border-gray-300 rounded p-1">
-          {title === "Country"
-            ? filteredCountries.map((country, idx) => (
-                <div
-                  key={idx}
-                  className="border-b border-gray-200 py-0.5"
-                >
-                  {country.name}
-                </div>
-              ))
-            : filteredItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="border-b border-gray-200 py-0.5"
-                >
-                  {getFirstFieldValue(item)}
-                </div>
-              ))}
-          {title === "Country" && filteredCountries.length === 0 && (
-            <div className="text-gray-400">No countries found</div>
-          )}
-          {title !== "Country" && filteredItems.length === 0 && (
+          {filteredItems.map((item, idx) => (
+            <div key={idx} className="border-b border-gray-200 py-0.5">
+              {getFirstFieldValue(item)}
+            </div>
+          ))}
+          {filteredItems.length === 0 && (
             <div className="text-gray-400">No items found</div>
           )}
         </div>
