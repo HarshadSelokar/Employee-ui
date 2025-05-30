@@ -80,7 +80,7 @@ export default function ListComponent({ title }: ListComponentProps) {
         break;
     }
 
-    // Check if the required field is empty
+
     if (!inputs[requiredField]) {
       alert(`${requiredField} is required!`);
       return;
@@ -169,7 +169,7 @@ export default function ListComponent({ title }: ListComponentProps) {
               <input
                 value={inputs.country}
                 onChange={(e) => handleInputChange("country", e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleKeyDown} placeholder="Enter Country"
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -219,7 +219,7 @@ export default function ListComponent({ title }: ListComponentProps) {
               <input
                 value={inputs.state}
                 onChange={(e) => handleInputChange("state", e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleKeyDown} placeholder="Enter State"
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -242,7 +242,7 @@ export default function ListComponent({ title }: ListComponentProps) {
               <input
                 value={inputs.city}
                 onChange={(e) => handleInputChange("city", e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleKeyDown} placeholder="Enter City"
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -274,7 +274,7 @@ export default function ListComponent({ title }: ListComponentProps) {
               <input
                 value={inputs.region}
                 onChange={(e) => handleInputChange("region", e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleKeyDown} placeholder="Enter Region"
                 className="border border-gray-300 rounded w-full p-1 text-xs"
               />
             </div>
@@ -319,7 +319,7 @@ export default function ListComponent({ title }: ListComponentProps) {
   };
 
   return (
-    <div className="flex flex-col border border-gray-300 rounded w-full h-[90%]">
+    <div className="flex flex-col border border-gray-300 rounded w-full h-[100%]">
       <div className="flex justify-between items-center bg-[#4e6a7c] text-white text-xs font-bold p-1">
         <div>{title.toUpperCase()}</div>
         <Cog6ToothIcon className="w-4 h-4" />
