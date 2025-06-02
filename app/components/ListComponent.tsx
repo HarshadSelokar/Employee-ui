@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MagnifyingGlassIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, Cog6ToothIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/solid";
+
 
 const initialCountries = [
   { country: "India", code: "IN", order: "1", phLength: "10", pinLength: "6", isDefault: false },
@@ -28,6 +29,7 @@ interface ListComponentProps {
 export default function ListComponent({ title }: ListComponentProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDefault, setIsDefault] = useState(false);
+
 
   const [inputs, setInputs] = useState<any>({
     country: "",
@@ -86,8 +88,12 @@ export default function ListComponent({ title }: ListComponentProps) {
       return;
     }
 
+
     let newItem;
+
+    // INPUT FIELD SCHEMA for ListC
     switch (title) {
+
       case "Country":
         newItem = {
           country: inputs.country,
@@ -98,6 +104,7 @@ export default function ListComponent({ title }: ListComponentProps) {
           isDefault,
         };
         break;
+
       case "State":
         newItem = {
           state: inputs.state,
@@ -105,6 +112,7 @@ export default function ListComponent({ title }: ListComponentProps) {
           isDefault,
         };
         break;
+      
       case "City":
         newItem = {
           city: inputs.city,
@@ -113,6 +121,7 @@ export default function ListComponent({ title }: ListComponentProps) {
           isDefault,
         };
         break;
+
       case "Region":
         newItem = {
           region: inputs.region,
@@ -150,6 +159,79 @@ export default function ListComponent({ title }: ListComponentProps) {
     }
   };
 
+const handleEdit = (item: any) => {
+  if (!item) {
+    console.error("Item is undefined:", item);
+    return;
+  }
+
+  const newInputs = {
+    country: "",
+    code: "",
+    order: "",
+    phLength: "",
+    pinLength: "",
+    state: "",
+    city: "",
+    region: "",
+    pincode: "",
+  };
+
+  switch (title) {
+    case "Country":
+      newInputs.country = item.country || "";
+      newInputs.code = item.code || "";
+      newInputs.order = item.order || "";
+      newInputs.phLength = item.phLength || "";
+      newInputs.pinLength = item.pinLength || "";
+      break;
+    case "State":
+      newInputs.state = item.state || "";
+      newInputs.order = item.order || "";
+      break;
+    case "City":
+      newInputs.city = item.city || "";
+      newInputs.pincode = item.pincode || "";
+      newInputs.order = item.order || "";
+      break;
+    case "Region":
+      newInputs.region = item.region || "";
+      newInputs.pincode = item.pincode || "";
+      newInputs.order = item.order || "";
+      break;
+    default:
+      break;
+  }
+
+  setInputs(newInputs);
+  setIsDefault(item.isDefault || false);
+
+  // THIS WILL REMOVE THE ITEM 
+
+  const updatedItems = [...items];
+  updatedItems.splice(item, 1);
+  setItems(updatedItems);
+
+  // 
+
+};
+
+
+
+
+const handleDelete = (index: number) => {
+  const updatedItems = [...items];
+  updatedItems.splice(index, 1);
+  setItems(updatedItems);
+};
+
+
+
+
+
+
+
+
   const filteredItems = items.filter((item) => {
     if (!searchTerm) return true;
     return Object.values(item)
@@ -158,11 +240,15 @@ export default function ListComponent({ title }: ListComponentProps) {
       .includes(searchTerm.toLowerCase());
   });
 
-  const renderFields = () => {
+
+  // INPUT FIELD RENDERING for ListC
+
+  const renderFields = () => { 
     switch (title) {
+
       case "Country":
-        return ( 
-            
+        return (
+
           <div className="flex gap-1 mb-1">
             <div className="flex-1">
               <label className="text-xs">Country</label>
@@ -211,6 +297,7 @@ export default function ListComponent({ title }: ListComponentProps) {
             </div>
           </div>
         );
+
       case "State":
         return (
           <div className="flex gap-1 mb-1">
@@ -234,6 +321,7 @@ export default function ListComponent({ title }: ListComponentProps) {
             </div>
           </div>
         );
+
       case "City":
         return (
           <div className="flex gap-1 mb-1">
@@ -266,6 +354,7 @@ export default function ListComponent({ title }: ListComponentProps) {
             </div>
           </div>
         );
+        
       case "Region":
         return (
           <div className="flex gap-1 mb-1">
@@ -298,9 +387,11 @@ export default function ListComponent({ title }: ListComponentProps) {
             </div>
           </div>
         );
+      
       default:
         return null;
     }
+
   };
 
   const getFirstFieldValue = (item: any) => {
@@ -317,6 +408,9 @@ export default function ListComponent({ title }: ListComponentProps) {
         return "";
     }
   };
+
+
+  
 
   return (
     <div className="flex flex-col border border-gray-300 rounded w-full h-[100%]">
@@ -366,8 +460,25 @@ export default function ListComponent({ title }: ListComponentProps) {
 
         <div className="flex flex-col gap-1 text-xs overflow-y-auto max-h-[40rem] border border-gray-300 rounded p-1">
           {filteredItems.map((item, idx) => (
-            <div key={idx} className="border-b border-gray-200 py-0.5">
-              {getFirstFieldValue(item)}
+            <div
+              key={idx}
+              className="flex items-center justify-between border-b border-gray-200 py-0.5"
+            >
+              <span>{getFirstFieldValue(item)}</span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="p-1 text-gray-500 hover:text-blue-500"
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(item)}
+                  className="p-1 text-gray-500 hover:text-red-500"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           ))}
           {filteredItems.length === 0 && (
