@@ -218,14 +218,11 @@ const handleEdit = (item: any) => {
 
 
 
-
 const handleDelete = (index: number) => {
   const updatedItems = [...items];
   updatedItems.splice(index, 1);
   setItems(updatedItems);
 };
-
-
 
 
 
@@ -462,10 +459,10 @@ const handleDelete = (index: number) => {
           {filteredItems.map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between border-b border-gray-200 py-0.5"
+              className="flex items-center justify-between border-b border-gray-200 py-0.5 group"
             >
               <span>{getFirstFieldValue(item)}</span>
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button
                   onClick={() => handleEdit(item)}
                   className="p-1 text-gray-500 hover:text-blue-500"
